@@ -7,6 +7,26 @@ const PolymerCard = ({ polymer, isSelected, onSelect, showSelection = false }) =
     onSelect(polymer._id);
   };
 
+  const renderImage = () => {
+    const isBiodegradable = polymer.type === 'Biodegradable';
+    return (
+      <div className={`w-full h-48 flex items-center justify-center text-white font-bold text-lg ${
+        isBiodegradable 
+          ? 'bg-gradient-to-br from-green-400 to-green-600' 
+          : 'bg-gradient-to-br from-red-400 to-red-600'
+      }`}>
+        <div className="text-center">
+          <div className="text-4xl mb-2">
+            {isBiodegradable ? '🌱' : '🏭'}
+          </div>
+          <div className="text-sm opacity-90">
+            {isBiodegradable ? 'ECO-FRIENDLY' : 'INDUSTRIAL'}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="relative border rounded-lg shadow-lg overflow-hidden bg-white hover:shadow-xl transition-shadow duration-300">
       {showSelection && (
@@ -21,11 +41,7 @@ const PolymerCard = ({ polymer, isSelected, onSelect, showSelection = false }) =
       )}
       
       <Link to={`/polymer/${polymer._id}`} className="block">
-        <img 
-          src={polymer.imageUrl || 'https://via.placeholder.com/400x200'} 
-          alt={polymer.name} 
-          className="w-full h-48 object-cover"
-        />
+        {renderImage()}
         <div className="p-4">
           <h3 className="text-xl font-bold">{polymer.name}</h3>
           <p className="text-gray-600">{polymer.abbreviation}</p>

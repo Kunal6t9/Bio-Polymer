@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/polymers", require("./routes/polymer.routes.js"));
-app.use('/api/auth', require("./routes/auth.routes.js"));
+app.use("/api/auth", require("./routes/auth.routes.js"));
 
 const PORT = process.env.PORT || 5000;
 
