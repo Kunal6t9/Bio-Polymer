@@ -3,17 +3,20 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
+    confirmPassword: '',
+    role: 'guest',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const {login} = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const { email, password } = formData;
+  const { name, email, password, confirmPassword, role } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,10 +25,28 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
     setError('');
+    
     try {
-      const res = await axios.post('http://localhost:5001/api/auth/login', formData);
+      const res = await axios.post('http://localhost:5001/api/auth/register', {
+        name,
+        email,
+        password,
+        role
+      });
+      
       login(res.data.token, res.data.user);
       
       // Redirect based on role
@@ -37,28 +58,28 @@ const LoginPage = () => {
         navigate('/');
       }
     } catch (error) {
-      console.error('Login failed:', error.response?.data?.msg);
-      setError(error.response?.data?.msg || 'Login failed. Please try again.');
+      console.error('Registration failed:', error.response?.data?.msg);
+      setError(error.response?.data?.msg || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 via-accent-50 to-gray-50">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary-50 via-accent-50 to-gray-50 py-12">
       <div className="w-full max-w-md">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <div className="inline-block p-4 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl shadow-xl mb-4">
-            <div className="text-5xl">🔐</div>
+          <div className="inline-block p-4 bg-gradient-to-br from-secondary-500 to-primary-500 rounded-2xl shadow-xl mb-4">
+            <div className="text-5xl">🧬</div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Administrator Login</h1>
-          <p className="text-gray-600">Access the PolyVision admin dashboard</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
+          <p className="text-gray-600">Join the PolyVision community</p>
         </div>
 
-        {/* Login Card */}
+        {/* Registration Card */}
         <div className="card p-8 shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
                 <div className="flex items-center">
@@ -69,6 +90,22 @@ const LoginPage = () => {
                 </div>
               </div>
             )}
+
+            <div>
+              <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                value={name}
+                onChange={handleChange}
+                required
+                className="input-field"
+                placeholder="John Doe"
+              />
+            </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -82,7 +119,7 @@ const LoginPage = () => {
                 onChange={handleChange}
                 required
                 className="input-field"
-                placeholder="admin@polyvision.com"
+                placeholder="john@example.com"
               />
             </div>
 
@@ -102,6 +139,41 @@ const LoginPage = () => {
               />
             </div>
 
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={handleChange}
+                required
+                className="input-field"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="role" className="block text-sm font-semibold text-gray-700 mb-2">
+                Account Type
+              </label>
+              <select
+                name="role"
+                id="role"
+                value={role}
+                onChange={handleChange}
+                className="input-field"
+              >
+                <option value="guest">Guest - Browse polymers</option>
+                <option value="contributor">Contributor - Submit polymer data</option>
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                Contributors can submit new polymer data for admin review
+              </p>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -117,19 +189,19 @@ const LoginPage = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Signing in...
+                  Creating account...
                 </span>
               ) : (
-                'Sign In'
+                'Create Account'
               )}
             </button>
           </form>
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-center text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-primary-600 hover:text-primary-700 font-semibold">
-                Register here
+              Already have an account?{' '}
+              <Link to="/login" className="text-primary-600 hover:text-primary-700 font-semibold">
+                Sign in
               </Link>
             </p>
           </div>
@@ -152,4 +224,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

@@ -14,11 +14,13 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.get("/", (req, res) => {
-  res.send("BioPolymer Hub API is running!");
+  res.send("PolyVision API is running!");
 });
 
+// Routes
 app.use("/api/polymers", require("./routes/polymer.routes.js"));
 app.use("/api/auth", require("./routes/auth.routes.js"));
+app.use("/api/submissions", require("./routes/submission.routes.js"));
 
 const PORT = process.env.PORT || 5000;
 

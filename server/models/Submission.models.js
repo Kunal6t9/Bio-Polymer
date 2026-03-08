@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
-const PolymerSchema = new mongoose.Schema(
+const SubmissionSchema = new mongoose.Schema(
   {
+    // Polymer data submitted by contributor
     name: {
       type: String,
       required: true,
@@ -24,12 +25,11 @@ const PolymerSchema = new mongoose.Schema(
       type: Map,
       of: String,
     },
-    // Degradation coefficients for parameter-driven simulation
     degradationCoefficients: {
-      baseRate: { type: Number, default: 1.0 }, // Base degradation rate
-      temperatureFactor: { type: Number, default: 0.05 }, // Temperature sensitivity
-      phFactor: { type: Number, default: 0.03 }, // pH sensitivity
-      moistureFactor: { type: Number, default: 0.04 }, // Moisture sensitivity
+      baseRate: { type: Number, default: 1.0 },
+      temperatureFactor: { type: Number, default: 0.05 },
+      phFactor: { type: Number, default: 0.03 },
+      moistureFactor: { type: Number, default: 0.04 },
     },
     notes: {
       type: String,
@@ -37,25 +37,34 @@ const PolymerSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
     },
-    // Metadata for submission tracking
+    // Submission metadata
     submittedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-    },
-    approvedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      required: true,
     },
     status: {
       type: String,
-      enum: ["approved", "pending", "rejected"],
-      default: "approved", // Direct admin additions are auto-approved
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
-    approvedAt: {
+    reviewedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    reviewNotes: {
+      type: String,
+    },
+    reviewedAt: {
       type: Date,
+    },
+    // If approved, reference to created polymer
+    polymerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Polymer",
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Polymer", PolymerSchema);
+module.exports = mongoose.model("Submission", SubmissionSchema);
