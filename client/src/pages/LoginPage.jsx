@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import API_URL from '../config/api.js';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ const LoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('http://localhost:5001/api/auth/login', formData);
+      const res = await axios.post(`${API_URL}/api/auth/login`, formData);
       login(res.data.token, res.data.user);
       
       // Redirect based on role

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from '../config/api.js';
 
 const ContributorDashboardPage = () => {
   const { user, token } = useAuth();
@@ -17,7 +18,7 @@ const ContributorDashboardPage = () => {
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5001/api/submissions/my-submissions', {
+      const response = await axios.get(`${API_URL}/api/submissions/my-submissions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSubmissions(response.data);

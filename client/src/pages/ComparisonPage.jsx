@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config/api.js';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -63,7 +64,7 @@ const ComparisonPage = () => {
 
         try {
           const response = await axios.post(
-            "http://localhost:5001/api/polymers/compare",
+            `${API_URL}/api/polymers/compare`,
             { ids }
           );
           setPolymers(response.data);

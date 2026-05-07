@@ -1,0 +1,344 @@
+{
+  "info": {
+    "name": "PolyVision API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "polymerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "submissionId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"contributor\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\",\n  \"role\": \"admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('token', res.token);",
+                  "  console.log('Token saved:', res.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('token', res.token);",
+                  "  console.log('Admin token saved:', res.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Login - Wrong Password",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - No Token Test (protected route)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/submissions"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Polymers",
+      "item": [
+        {
+          "name": "Get All Polymers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (Array.isArray(res) && res.length > 0) {",
+                  "  pm.collectionVariables.set('polymerId', res[0]._id);",
+                  "  console.log('Polymer ID saved:', res[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/polymers"
+          }
+        },
+        {
+          "name": "Get Polymer by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/polymers/{{polymerId}}"
+          }
+        },
+        {
+          "name": "Get Polymer - Invalid ID (404 test)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/polymers/000000000000000000000000"
+          }
+        },
+        {
+          "name": "Add New Polymer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": "{{baseUrl}}/api/polymers",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Polylactic Acid\",\n  \"abbreviation\": \"PLA\",\n  \"chemicalFormula\": \"(C3H4O2)n\",\n  \"type\": \"Biodegradable\",\n  \"commonUses\": [\"Food packaging\", \"3D printing\", \"Medical implants\"],\n  \"degradationTimes\": {\n    \"Ocean\": \"80 years\",\n    \"Landfill\": \"100 years\",\n    \"Industrial Compost\": \"3 months\",\n    \"Soil\": \"2 years\"\n  },\n  \"degradationCoefficients\": {\n    \"baseRate\": 1.0,\n    \"temperatureFactor\": 0.06,\n    \"phFactor\": 0.04,\n    \"moistureFactor\": 0.05\n  },\n  \"notes\": \"Breaks down quickly in industrial composting conditions.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Polymer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": "{{baseUrl}}/api/polymers/{{polymerId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Updated notes - verified degradation data.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Compare Polymers",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/polymers/compare",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"{{polymerId}}\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Polymer",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": "{{baseUrl}}/api/polymers/{{polymerId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Submissions",
+      "item": [
+        {
+          "name": "Create Submission (Contributor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res._id) {",
+                  "  pm.collectionVariables.set('submissionId', res._id);",
+                  "  console.log('Submission ID saved:', res._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": "{{baseUrl}}/api/submissions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Polyhydroxyalkanoates\",\n  \"abbreviation\": \"PHA\",\n  \"chemicalFormula\": \"(C4H6O2)n\",\n  \"type\": \"Biodegradable\",\n  \"commonUses\": [\"Packaging\", \"Agricultural films\", \"Medical devices\"],\n  \"degradationTimes\": {\n    \"Ocean\": \"3 years\",\n    \"Landfill\": \"5 years\",\n    \"Industrial Compost\": \"6 months\",\n    \"Soil\": \"1 year\"\n  },\n  \"degradationCoefficients\": {\n    \"baseRate\": 1.0,\n    \"temperatureFactor\": 0.05,\n    \"phFactor\": 0.03,\n    \"moistureFactor\": 0.04\n  },\n  \"notes\": \"Produced by bacteria, fully biodegradable in natural environments.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Submission - No Token (401 test)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/submissions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Polymer\",\n  \"type\": \"Biodegradable\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get All Submissions (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": "{{baseUrl}}/api/submissions"
+          }
+        },
+        {
+          "name": "Get Pending Submissions (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": "{{baseUrl}}/api/submissions/pending"
+          }
+        },
+        {
+          "name": "Get My Submissions (Contributor)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": "{{baseUrl}}/api/submissions/my-submissions"
+          }
+        },
+        {
+          "name": "Approve Submission (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": "{{baseUrl}}/api/submissions/{{submissionId}}/approve",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reviewNotes\": \"Data verified and approved.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reject Submission (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "url": "{{baseUrl}}/api/submissions/{{submissionId}}/reject",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reviewNotes\": \"Insufficient data provided.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Submission (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": "{{baseUrl}}/api/submissions/{{submissionId}}"
+          }
+        }
+      ]
+    }
+  ]
+}

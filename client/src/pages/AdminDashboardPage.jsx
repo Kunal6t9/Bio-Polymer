@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Modal from '../components/Modal';
 import PolymerForm from '../components/PolymerForm';
+import API_URL from '../config/api.js';
 
 const AdminDashboardPage = () => {
   const { logout, token } = useAuth();
@@ -26,8 +27,8 @@ const AdminDashboardPage = () => {
     setLoading(true);
     try {
       const [polymersRes, submissionsRes] = await Promise.all([
-        axios.get('http://localhost:5001/api/polymers'),
-        axios.get('http://localhost:5001/api/submissions/pending', {
+        axios.get(`${API_URL}/api/polymers`),
+        axios.get(`${API_URL}/api/submissions/pending`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -58,7 +59,7 @@ const AdminDashboardPage = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this polymer?')) {
       try {
-        await axios.delete(`http://localhost:5001/api/polymers/${id}`);
+        await axios.delete(`${API_URL}/api/polymers/${id}`);
         alert('Polymer deleted successfully.');
         fetchData();
       } catch (error) {
@@ -89,7 +90,7 @@ const AdminDashboardPage = () => {
     
     try {
       await axios.put(
-        `http://localhost:5001/api/submissions/${reviewingSubmission._id}/approve`,
+        `${API_URL}/api/submissions/${reviewingSubmission._id}/approve`,
         { reviewNotes },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -113,7 +114,7 @@ const AdminDashboardPage = () => {
 
     try {
       await axios.put(
-        `http://localhost:5001/api/submissions/${reviewingSubmission._id}/reject`,
+        `${API_URL}/api/submissions/${reviewingSubmission._id}/reject`,
         { reviewNotes },
         { headers: { Authorization: `Bearer ${token}` } }
       );

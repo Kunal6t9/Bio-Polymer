@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config/api.js';
 
 const PolymerDetailPage = () => {
   const { id } = useParams();
@@ -12,7 +13,7 @@ const PolymerDetailPage = () => {
     const fetchPolymer = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/api/polymers/${id}`
+          `${API_URL}/api/polymers/${id}`
         );
         setPolymer(response.data);
       } catch (error) {

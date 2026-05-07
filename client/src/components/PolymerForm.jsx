@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from '../config/api.js';
 
 const PolymerForm = ({ onSuccess, polymerToEdit }) => {
   const [formData, setFormData] = useState({
@@ -39,10 +40,10 @@ const PolymerForm = ({ onSuccess, polymerToEdit }) => {
       };
 
       if (polymerToEdit) {
-        await axios.put(`http://localhost:5001/api/polymers/${polymerToEdit._id}`, submissionData);
+        await axios.put(`${API_URL}/api/polymers/${polymerToEdit._id}`, submissionData);
         alert('Polymer updated successfully!');
       } else {
-        await axios.post('http://localhost:5001/api/polymers', submissionData);
+        await axios.post(`${API_URL}/api/polymers`, submissionData);
         alert('Polymer created successfully!');
       }
       onSuccess();

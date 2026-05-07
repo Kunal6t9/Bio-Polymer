@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API_URL from '../config/api.js';
 
 const SimulatorPage = () => {
   const [allPolymers, setAllPolymers] = useState([]);
@@ -24,7 +25,7 @@ const SimulatorPage = () => {
   useEffect(() => {
     const fetchPolymers = async () => {
       try {
-        const response = await axios.get("http://localhost:5001/api/polymers");
+        const response = await axios.get(`${API_URL}/api/polymers`);
         setAllPolymers(response.data);
       } catch (error) {
         console.error("Error fetching polymers:", error);

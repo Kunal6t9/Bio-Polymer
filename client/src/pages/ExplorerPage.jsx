@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PolymerCard from '../components/PolymerCard';
+import API_URL from '../config/api.js';
 
 const ExplorerPage = () => {
   const [polymers, setPolymers] = useState([]);
@@ -15,7 +16,7 @@ const ExplorerPage = () => {
   useEffect(() => {
     const fetchPolymers = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/polymers');
+        const response = await axios.get(`${API_URL}/api/polymers`);
         setPolymers(response.data);
       } catch (error) {
         console.error('Error fetching polymers:', error);

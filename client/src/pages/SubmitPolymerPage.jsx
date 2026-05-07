@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import API_URL from '../config/api.js';
 
 const SubmitPolymerPage = () => {
   const { token } = useAuth();
@@ -36,7 +37,7 @@ const SubmitPolymerPage = () => {
         degradationTimes: JSON.parse(formData.degradationTimes),
       };
 
-      await axios.post('http://localhost:5001/api/submissions', submissionData, {
+      await axios.post(`${API_URL}/api/submissions`, submissionData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
