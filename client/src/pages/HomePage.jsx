@@ -31,7 +31,7 @@ const HomePage = () => {
   ];
 
   const stats = [
-    { value: "150+", label: "Biopolymers", icon: "🧪" },
+    { value: "90+", label: "Biopolymers", icon: "🧪" },
     { value: "1000+", label: "Simulations", icon: "📈" },
     { value: "15+", label: "Material Types", icon: "🌿" },
     { value: "24/7", label: "Access", icon: "🌐" },
